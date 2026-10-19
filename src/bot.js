@@ -1,5 +1,5 @@
 import { Bot } from "node-telegram-bot-api";
-import { getQuote, getAuthor } from "./api.js";
+import { getQuote, getAuthor, getPhoto } from "./api.js";
 
 export const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -74,6 +74,24 @@ bot.hears('Цитата', async (ctx)=>{
     }
 )}
 )
+
+bot.hears('Жарт', async (ctx)=>{
+    resetState(ctx);
+
+    const memeData = await getPhoto();
+
+    if(!memeData.success){
+        await ctx.reply(memeData.text);
+        return;
+    }
+
+    await ctx.api.sendPhoto({
+        chat_id: ctx.chatId,
+        photo: memeData.imageUrl,
+        caption: memeData.title
+    });
+
+})
 
 bot.on("callback_query", async (ctx) =>{
     const data = ctx.callbackQuery?.data;
