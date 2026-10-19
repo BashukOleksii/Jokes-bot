@@ -47,7 +47,7 @@ bot.command('start', async (ctx) =>{
      await ctx.reply(
             `Привіт, ${ctx.from?.first_name ?? 'друже'}, обирай дію!`,
             {
-                reply_markup:  getReplyKeyboard(ctx.chatId)
+                reply_markup:  await getReplyKeyboard(ctx.chatId)
             }
         );
 })
@@ -107,7 +107,7 @@ bot.hears('Підписатись', async (ctx) =>{
 
         await subscribe(ctx.chatId, ctx.from.id);
         await ctx.reply("Успішно! Оформлено щоденну підписку о 9 годині за Києвом",
-            { reply_markup: getReplyKeyboard(ctx.chatId)} );
+            { reply_markup: await getReplyKeyboard(ctx.chatId)} );
     }
     catch{
         await ctx.reply('Помилка із збереженням підписки')
@@ -122,7 +122,7 @@ bot.hears('Відписатись',async (ctx)=> {
         }
 
         await unsubscribe(ctx.chatId);
-        await ctx.reply('Успішно! Підписку скасовано', {reply_markup: getReplyKeyboard(ctx.chatId)})
+        await ctx.reply('Успішно! Підписку скасовано', {reply_markup: await getReplyKeyboard(ctx.chatId)})
     }
     catch{
         await ctx.reply('Помилка скасування підписки');
