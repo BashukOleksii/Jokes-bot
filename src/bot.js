@@ -52,11 +52,6 @@ bot.command('start', async (ctx) =>{
         );
 })
 
-bot.command('cancel', async (ctx) =>{
-    resetState(ctx);
-    await ctx.reply("Дію скасовано");
-})
-
 bot.hears('Цитата', async (ctx)=>{
     resetState(ctx);
     await ctx.reply(
@@ -154,10 +149,22 @@ bot.on("callback_query", async (ctx) =>{
         }
     }
     else if(data === 'author_quote'){
-        await ctx.reply("Введіть ім'я та прізвище автора розділених комою\nДля скасування введіть '/cancel'");
+        await ctx.reply(
+            "Введіть ім'я та прізвище автора розділених комою",
+        {
+            reply_markup:{
+                keyboard:["Скасувати"],
+                resize_keyboard: true,
+                is_persistent: true,
+        }});
         userStates.set(key,userStatesArray[0])
     }
 });
+
+bot.hears('Скасувати', async (ctx) =>{
+    resetState(ctx);
+    await ctx.reply("Дію скасовано", {reply_markup: await getReplyKeyboard(ctx.chatId)})
+})
 
 bot.on('message', async (ctx) =>{
     const key = getUserKey(ctx);
@@ -199,7 +206,7 @@ bot.on('message', async (ctx) =>{
 
             userStates.delete(key);
 
-            await ctx.reply(quote.text);
+            await ctx.reply(quote.text, {reply_markup: await getReplyKeyboard(ctx.chatId)});
 
         }
         catch(err){
