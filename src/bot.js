@@ -151,12 +151,15 @@ bot.on("callback_query", async (ctx) =>{
     else if(data === 'author_quote'){
         await ctx.reply(
             "Введіть ім'я та прізвище автора розділених комою",
-        {
-            reply_markup:{
-                keyboard:["Скасувати"],
-                resize_keyboard: true,
-                is_persistent: true,
-        }});
+            {
+                reply_markup: {
+                    keyboard: ['Скасувати'],
+                    resize_keyboard: true,
+                    is_persistent: true
+                },
+            }
+        )
+        
         userStates.set(key,userStatesArray[0])
     }
 });
