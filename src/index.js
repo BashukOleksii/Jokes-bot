@@ -4,6 +4,7 @@ import { createWebhookServer } from "node-telegram-bot-api/node";
 import { getAuthor, getQuote} from "./api.js"
 import { connectDB } from "./database.js";
 import { startSchedule } from "./scheduler.js";
+import { connectRedis } from "./redis-client.js";
 
 const TOKEN = process.env.BOT_TOKEN;
 const SECRET = process.env.WEBHOOK_SECRET;
@@ -17,7 +18,8 @@ if(!TOKEN || !SECRET){
     throw new Error("Токен чи секрет не встановлено");
 }
 
-await connectDB()
+await connectDB();
+await connectRedis();
 startSchedule();
 
 const server = createWebhookServer(bot, {

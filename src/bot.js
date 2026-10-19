@@ -1,28 +1,9 @@
 import { Bot } from "node-telegram-bot-api";
 import { getQuote, getAuthor, getPhoto } from "./api.js";
 import { subscribe, unsubscribe, isActive } from "./subscription-service.js";
+import { USER_STATES,getUserSate, setUserState, resetUserState } from "./state-service.js";
 
 export const bot = new Bot(process.env.BOT_TOKEN);
-
-const userStates = new Map();
-
-const userStatesArray = [
-    'waiting_author']
-
-function getUserKey(ctx){
-    if(ctx.chatId == null || ctx.from?.id == null){
-        return null;
-    }
-
-    else return `${ctx.chatId}:${ctx.from.id}`;
-}
-
-function resetState(ctx){
-    const key = getUserKey(ctx);
-
-    if(key)
-        userStates.delete(key);
-}
 
 async function getReplyKeyboard(chatId){
     return {
@@ -42,7 +23,7 @@ async function getReplyKeyboard(chatId){
 }
 
 bot.command('start', async (ctx) =>{ 
-    resetState(ctx);
+    await resetUserState(ctx);
 
      await ctx.reply(
             `Привіт, ${ctx.from?.first_name ?? 'друже'}, обирай дію!`,
@@ -53,7 +34,7 @@ bot.command('start', async (ctx) =>{
 })
 
 bot.hears('Цитата', async (ctx)=>{
-    resetState(ctx);
+    await resetUserState(ctx);
     await ctx.reply(
     "Ви бажаєте цитату конкретного автора чи рандомну цитату?",
     {
@@ -76,7 +57,7 @@ bot.hears('Цитата', async (ctx)=>{
 )
 
 bot.hears('Жарт', async (ctx)=>{
-    resetState(ctx);
+    await resetUserState(ctx);
 
     const memeData = await getPhoto();
 
@@ -128,16 +109,11 @@ bot.on("callback_query", async (ctx) =>{
     const data = ctx.callbackQuery?.data;
     await ctx.answerCallbackQuery();
 
-    const key = getUserKey(ctx);
-
-    if(!key)
-        return;
-
     let answer;
 
     if(data === 'random_quote'){
         try{
-            resetState(ctx);
+            await resetUserState(ctx);
             answer = await getQuote();
             if(!answer.success)
                 await ctx.reply(`Помилка: ${answer.text}`)
@@ -160,24 +136,19 @@ bot.on("callback_query", async (ctx) =>{
             }
         )
         
-        userStates.set(key,userStatesArray[0])
+        await setUserState(ctx, USER_STATES.WAITING_AUTHOR);
     }
 });
 
 bot.hears('Скасувати', async (ctx) =>{
-    resetState(ctx);
+    await resetUserState(ctx);
     await ctx.reply("Дію скасовано", {reply_markup: await getReplyKeyboard(ctx.chatId)})
 })
 
 bot.on('message', async (ctx) =>{
-    const key = getUserKey(ctx);
+    const state = await getUserSate(ctx);
 
-    if(!key)
-        return;
-
-    const state = userStates.get(key);
-
-    if(state === userStatesArray[0]){
+    if(state === USER_STATES.WAITING_AUTHOR){
         const text = ctx.message?.text?.trim();
 
         if(!text){
@@ -195,7 +166,6 @@ bot.on('message', async (ctx) =>{
             return;
         }
 
-
         try{
 
             const authorIdData = await getAuthor(authorData[0].trim(),authorData[1].trim());
@@ -207,7 +177,7 @@ bot.on('message', async (ctx) =>{
 
             const quote = await getQuote(authorIdData.text);
 
-            userStates.delete(key);
+            resetUserState(ctx);
 
             await ctx.reply(quote.text, {reply_markup: await getReplyKeyboard(ctx.chatId)});
 
