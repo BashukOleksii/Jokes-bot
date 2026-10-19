@@ -35,7 +35,10 @@ server.listen(PORT, "0.0.0.0", async() =>{
         await bot.api.setWebhook({
             url: webhookUrl,
             secret_token: SECRET,
-            allowed_updates: ['message']
+            allowed_updates: [
+                'message',
+                'callback_query'
+            ]
         }); й
 
         console.log("webhook вставновлено")
