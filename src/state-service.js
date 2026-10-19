@@ -23,11 +23,11 @@ export async function setUserState(ctx, state){
 export async function getUserSate(ctx){
     const key = getUserKey(ctx);
 
-    await getRedis().get(key);
+    return await getRedis().get(key);
 }
 
 export async function resetUserState(ctx){
     const key = getUserKey(ctx);
 
-    await getRedis().del(key);
+    return await getRedis().del(key);
 }
