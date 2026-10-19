@@ -1,5 +1,6 @@
 import { Bot } from "node-telegram-bot-api";
 import { getQuote, getAuthor, getPhoto } from "./api.js";
+import { subscribe, unsubscribe } from "./subscription-service.js";
 
 export const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -91,6 +92,36 @@ bot.hears('Жарт', async (ctx)=>{
         caption: memeData.title
     });
 
+})
+
+bot.hears('Підписатись', async (ctx) =>{
+    try{
+        if(ctx.chat?.type != 'private'){
+            await ctx.reply('Підписка присутня лише в приватній розмові');
+            return;
+        }
+
+        await subscribe(ctx.chatId, ctx.from.id);
+        await ctx.reply("Успішно! Оформлено щоденну підписку о 9 годині за Києвом");
+    }
+    catch{
+        await ctx.reply('Помилка із збереженням підписки')
+    }
+})
+
+bot.hears('Відписатись',async (ctx)=> {
+    try{
+        if(ctx.chat?.type != 'private'){
+            await ctx.reply('Підписка присутня лише в приватній розмові');
+            return;
+        }
+
+        await unsubscribe(ctx.chatId);
+        await ctx.reply('Успішно! Підписку скасовано')
+    }
+    catch{
+        await ctx.reply('Помилка скасування підписки');
+    }
 })
 
 bot.on("callback_query", async (ctx) =>{

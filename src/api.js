@@ -50,7 +50,7 @@ export async function getQuote(authorId){
 export async function getPhoto(){
     const url = "https://meme-api.com/gimme";
 
-    for(let i = 0; i < 5; i++){
+    for(let i = 0; i < 20; i++){
         const response = await fetch(url);
 
         if(!response.ok)

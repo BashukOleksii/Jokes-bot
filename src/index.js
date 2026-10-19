@@ -2,6 +2,8 @@ import "dotenv/config";
 import { bot } from "./bot.js";
 import { createWebhookServer } from "node-telegram-bot-api/node";
 import { getAuthor, getQuote} from "./api.js"
+import { connectDB } from "./database.js";
+import { startSchedule } from "./scheduler.js";
 
 const TOKEN = process.env.BOT_TOKEN;
 const SECRET = process.env.WEBHOOK_SECRET;
@@ -15,6 +17,8 @@ if(!TOKEN || !SECRET){
     throw new Error("Токен чи секрет не встановлено");
 }
 
+await connectDB()
+startSchedule();
 
 const server = createWebhookServer(bot, {
     path: WEBHOOK_PATH,
