@@ -57,5 +57,5 @@ export async function markAsSent(chatId, date) {
 export async function isActive(chatId) {
     const subscriber =  await subscriptions().findOne({chatId: chatId});
 
-    return subscribe?.active === true;
+    return subscriber?.active === true;
 }
