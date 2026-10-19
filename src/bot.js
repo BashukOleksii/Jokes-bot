@@ -100,7 +100,7 @@ bot.on("callback_query", async (ctx) =>{
         }
     }
     else if(data === 'author_quote'){
-        await ctx.reply("Введіть прізвище та ім'я автора через пробіл\nДля скасування введіть '/cancel'");
+        await ctx.reply("Введіть ім'я та прізвище автора через пробіл\nДля скасування введіть '/cancel'");
         userStates.set(key,userStatesArray[0])
     }
 });

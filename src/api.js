@@ -1,19 +1,17 @@
 export async function getAuthor(firstName, lastName){
-    const url = "https://api.zitat-service.de/v1/authors?languages=uk";
+    const url = "https://api.zitat-service.de/v1/authors?language=uk";
     if(!firstName || !lastName)
-        return 
-    {
-        success: false;
+        return{
+        success: false,
         text: "Прізвище та ім'я обов'язкові поля"
     }
 
 
-    const response = await fetch (url + ",firstname="+firstName+",lastname="+lastName);
+    const response = await fetch (url + "&firstname="+firstName+"&lastname="+lastName);
 
     if(!response.ok)
-        return
-    {
-        success: false;
+        return{
+        success: false,
         text: "Автора не знайдено"
     };
 
@@ -27,14 +25,14 @@ export async function getAuthor(firstName, lastName){
 }
 
 export async function getQuote(authorId){
-    url = "https://api.zitat-service.de/v1/quote?languages=uk";
+    let url = "https://api.zitat-service.de/v1/quote?language=uk";
     
     if(authorId)
-        url += ",authorId="+authorId;
+        url += "&authorId="+authorId;
 
-    response = await fetch(url);
+    const response = await fetch(url);
 
-    data = await response.json();
+    const data = await response.json();
 
     if(!response.ok)
         return {
