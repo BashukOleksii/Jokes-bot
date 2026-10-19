@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev":"node --watch src/index.js"
+    "dev": "node --watch src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +14,9 @@
   "dependencies": {
     "dotenv": "^18.0.8",
     "node-telegram-bot-api": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/node-telegram-bot-api": "^0.64.15"
   }
 }

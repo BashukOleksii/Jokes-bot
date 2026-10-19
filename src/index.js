@@ -1,6 +1,7 @@
 import "dotenv/config";
-import { Bot } from "node-telegram-bot-api";
+import { bot } from "./bot.js";
 import { createWebhookServer } from "node-telegram-bot-api/node";
+import { getAuthor, getQuote} from "./api.js"
 
 const TOKEN = process.env.BOT_TOKEN;
 const SECRET = process.env.WEBHOOK_SECRET;
@@ -14,15 +15,6 @@ if(!TOKEN || !SECRET){
     throw new Error("Токен чи секрет не встановлено");
 }
 
-const bot = new Bot(TOKEN);
-
-bot.command('start', async (ctx) =>{ 
-    console.log("Select /start command");
-
-    await ctx.reply(
-        "Привіт, телеграм бот працює!"
-    );
-})
 
 const server = createWebhookServer(bot, {
     path: WEBHOOK_PATH,
@@ -44,7 +36,7 @@ server.listen(PORT, "0.0.0.0", async() =>{
             url: webhookUrl,
             secret_token: SECRET,
             allowed_updates: ['message']
-        });
+        }); й
 
         console.log("webhook вставновлено")
 
