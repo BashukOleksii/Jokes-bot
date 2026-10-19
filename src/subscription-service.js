@@ -53,3 +53,7 @@ export async function markAsSent(chatId, date) {
         }
     );
 }
+
+export async function isActive(chatId) {
+    return await subscriptions().find({chatId}).active === true;
+}

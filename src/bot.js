@@ -1,6 +1,6 @@
 import { Bot } from "node-telegram-bot-api";
 import { getQuote, getAuthor, getPhoto } from "./api.js";
-import { subscribe, unsubscribe } from "./subscription-service.js";
+import { subscribe, unsubscribe, isActive } from "./subscription-service.js";
 
 export const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -17,7 +17,6 @@ function getUserKey(ctx){
     else return `${ctx.chatId}:${ctx.from.id}`;
 }
 
-
 function resetState(ctx){
     const key = getUserKey(ctx);
 
@@ -25,27 +24,32 @@ function resetState(ctx){
         userStates.delete(key);
 }
 
+async function getReplyKeyboard(chatId){
+    return {
+        keyboard:[
+            [
+                {text: "Цитата"},
+                {text: "Жарт"}
+            ],
+            [
+                {text: (await isActive(chatId)) ? "Відписатись":"Підписатись"}
+            ]
+                    ],
+            resize_keyboard: true,
+            is_persistent: true,
+    }
+             
+}
+
 bot.command('start', async (ctx) =>{ 
     resetState(ctx);
 
-    await ctx.reply(
-        `Привіт, ${ctx.from?.first_name ?? 'друже'}, обирай дію!`,
-        {
-            reply_markup:{
-                keyboard:[
-                    [
-                        {text: "Цитата"},
-                        {text: "Жарт"}
-                    ],
-                    [
-                        {text: "Підписатись"}
-                    ]
-                ],
-                resize_keyboard: true,
-                is_persistent: true,
+     await ctx.reply(
+            `Привіт, ${ctx.from?.first_name ?? 'друже'}, обирай дію!`,
+            {
+                reply_markup:  getReplyKeyboard(ctx.chatId)
             }
-        }
-    );
+        );
 })
 
 bot.command('cancel', async (ctx) =>{
@@ -102,7 +106,8 @@ bot.hears('Підписатись', async (ctx) =>{
         }
 
         await subscribe(ctx.chatId, ctx.from.id);
-        await ctx.reply("Успішно! Оформлено щоденну підписку о 9 годині за Києвом");
+        await ctx.reply("Успішно! Оформлено щоденну підписку о 9 годині за Києвом",
+            { reply_markup: getReplyKeyboard(ctx.chatId)} );
     }
     catch{
         await ctx.reply('Помилка із збереженням підписки')
@@ -117,7 +122,7 @@ bot.hears('Відписатись',async (ctx)=> {
         }
 
         await unsubscribe(ctx.chatId);
-        await ctx.reply('Успішно! Підписку скасовано')
+        await ctx.reply('Успішно! Підписку скасовано', {reply_markup: getReplyKeyboard(ctx.chatId)})
     }
     catch{
         await ctx.reply('Помилка скасування підписки');
