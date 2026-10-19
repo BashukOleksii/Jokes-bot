@@ -7,7 +7,7 @@ export async function getAuthor(firstName, lastName){
     }
 
 
-    const response = await fetch (url + "&firstname="+firstName+"&lastname="+lastName);
+    const response = await fetch (url + "&firstname="+encodeURIComponent(firstName)+"&lastname="+encodeURIComponent(lastName));
 
     if(!response.ok)
         return{

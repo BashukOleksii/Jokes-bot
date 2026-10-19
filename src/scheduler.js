@@ -50,7 +50,7 @@ export async function sendDailyContent() {
             console.log(`Надіслано повідомлення для ${subscriber.chatId}`);
         }
         catch(err){
-            console.log(`Помилка для ${subscriber.chatId}`)
+            console.log(`Помилка для ${subscriber.chatId}`, err)
         }
     }
 }

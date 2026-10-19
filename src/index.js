@@ -43,7 +43,7 @@ server.listen(PORT, "0.0.0.0", async() =>{
                 'message',
                 'callback_query'
             ]
-        }); й
+        }); 
 
         console.log("webhook вставновлено")
 
