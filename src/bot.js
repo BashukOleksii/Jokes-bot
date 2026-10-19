@@ -153,7 +153,7 @@ bot.on("callback_query", async (ctx) =>{
             "Введіть ім'я та прізвище автора розділених комою",
             {
                 reply_markup: {
-                    keyboard: ['Скасувати'],
+                    keyboard: [[{ text: 'Скасувати'}]],
                     resize_keyboard: true,
                     is_persistent: true
                 },
