@@ -43,7 +43,7 @@ export async function getQuote(authorId){
     else
         return {
         success: true,
-        text: `${data.authorName}: '${data.quote}'\nРесурс:${data.source}` 
+        text: `${data.authorName}: '${data.quote}'\nРесурс: ${data.source}` 
     };
 }
 

@@ -154,7 +154,7 @@ bot.on("callback_query", async (ctx) =>{
         }
     }
     else if(data === 'author_quote'){
-        await ctx.reply("Введіть ім'я та прізвище автора через пробіл\nДля скасування введіть '/cancel'");
+        await ctx.reply("Введіть ім'я та прізвище автора розділених комою\nДля скасування введіть '/cancel'");
         userStates.set(key,userStatesArray[0])
     }
 });
@@ -178,7 +178,7 @@ bot.on('message', async (ctx) =>{
         if(text.startsWith('/'))
             return;
 
-        const authorData = text.split(/\s+/);
+        const authorData = text.split(',');
 
         if(authorData.length !== 2){
             await ctx.reply("Потрібно ввести два слова");
@@ -188,7 +188,7 @@ bot.on('message', async (ctx) =>{
 
         try{
 
-            const authorIdData = await getAuthor(authorData[0],authorData[1]);
+            const authorIdData = await getAuthor(authorData[0].trim(),authorData[1].trim());
 
             if(!authorIdData.success){
                 await ctx.reply(authorIdData.text);
